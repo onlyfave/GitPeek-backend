@@ -5,6 +5,13 @@ import "dotenv/config";
 const app = express();
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.json({
+    message: "GitHub Finder Proxy API",
+    endpoints: ["/api/repos/:owner/:repo"],
+  });
+});
+
 app.get("/api/repos/:owner/:repo", async (req, res) => {
   const { owner, repo } = req.params;
   try {
@@ -17,7 +24,9 @@ app.get("/api/repos/:owner/:repo", async (req, res) => {
     });
 
     if (ghRes.status === 403) {
-      return res.status(ghRes.status).json({ message: "GitHub rate limit exceeded." });
+      return res
+        .status(ghRes.status)
+        .json({ message: "GitHub rate limit exceeded." });
     }
 
     const data = await ghRes.json();
